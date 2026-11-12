@@ -1,0 +1,70 @@
+# CARLA AV framework - default configuration
+
+carla:
+  host: localhost
+  port: 2000
+  timeout: 10.0              # seconds to wait for the server
+  town: Town03               # null = keep whatever map is loaded
+  sync: true                 # synchronous mode: the sim only advances when we tick
+  fixed_delta_seconds: 0.05  # 20 Hz simulation step (used when sync: true)
+  render: true               # false = no_rendering_mode (cameras return black images!)
+  follow_spectator: true     # move the server window's camera behind the ego car
+
+seed: 42                     # null for a different run each time
+weather: ClearNoon           # any carla.WeatherParameters preset, e.g. WetCloudySunset, HardRainNight
+
+ego:
+  blueprint: vehicle.tesla.model3
+  spawn_point: null          # index into map spawn points, or null for random
+
+traffic:
+  vehicles: 20               # NPC cars driven by the Traffic Manager
+  tm_port: 8000
+
+
+# Sensors: name, type, transform, attributes
+
+sensors:
+  - name: front_cam
+    type: rgb_camera
+    transform: {x: 1.5, z: 2.4}
+    attributes: {image_size_x: 800, image_size_y: 600, fov: 90}
+
+  - name: lidar
+    type: lidar
+    transform: {x: 0.0, z: 2.5}
+    attributes:
+      channels: 32
+      range: 50
+      points_per_second: 200000
+      rotation_frequency: 20   # match 1 / fixed_delta_seconds for a full sweep per tick
+      upper_fov: 10
+      lower_fov: -30
+
+  - name: gnss
+    type: gnss
+    transform: {x: 0.0, z: 1.0}
+
+  - name: imu
+    type: imu
+    transform: {x: 0.0, z: 1.0}
+
+  - name: collision
+    type: collision
+
+  - name: lane_invasion
+    type: lane_invasion
+
+
+# Autonomy: select registered agent from av/agents.py
+agent:
+  type: waypoint_follower
+  params:
+    target_speed_kmh: 30
+
+display:
+  enabled: true
+  sensor: front_cam          # which camera to show in the pygame window
+
+run:
+  max_steps: 3000            # null = run until you close the window / Ctrl+C

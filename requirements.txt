@@ -1,0 +1,5 @@
+# The carla client version MUST match your CARLA server version.
+carla==0.9.16
+numpy
+pygame
+pyyaml
